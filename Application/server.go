@@ -4,16 +4,13 @@ import (
 	"fmt"
 	"html/template"
 	"log"
-	"net/http"  
+	"net/http"
 	"os"
 )
 
 // StartWebService starts the web server
-func StartWebService(){
-	http.Handle("/css/", http.StripPrefix("/css/", http.FileServer(http.Dir("css"))))
-	http.Handle("/img/", http.StripPrefix("/img/", http.FileServer(http.Dir("img"))))
-	http.Handle("/fonts/", http.StripPrefix("/fonts/", http.FileServer(http.Dir("fonts"))))	
-	http.HandleFunc("/", Home)
+func StartWebService() {
+	http.HandleFunc("/api/v1/Linee", GetLines)
 	log.Fatal(http.ListenAndServe(getPort(), nil))
 }
 
@@ -27,8 +24,8 @@ func getPort() string {
 
 func render(w http.ResponseWriter, tmpl string, pageVars PageVars) {
 
-	tmpl = fmt.Sprintf("views/%s", tmpl) 
-	t, err := template.ParseFiles(tmpl)      
+	tmpl = fmt.Sprintf("views/%s", tmpl)
+	t, err := template.ParseFiles(tmpl)
 
 	if err != nil { // if there is an error
 		log.Print("template parsing error: ", err) // log it
@@ -44,7 +41,7 @@ func render(w http.ResponseWriter, tmpl string, pageVars PageVars) {
 // Home handles home page rendering
 func Home(w http.ResponseWriter, req *http.Request) {
 	pageVars := PageVars{
-		Message: "Success!",
+		Message:  "Success!",
 		Language: "Go Lang",
 	}
 	render(w, "index.html", pageVars)
